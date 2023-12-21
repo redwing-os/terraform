@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
 # Create a new VPC
@@ -135,7 +135,7 @@ resource "aws_network_acl_rule" "allow_all_outbound" {
 # EC2 instance
 resource "aws_instance" "redwing_vector_host" {
   ami                    = "ami-05d47d29a4c2d19e1" # Choose your AMI / arm64 required for Docker image match
-  instance_type          = "m6g.large" 
+  instance_type          = var.instance_type
   key_name               = var.ec2_key_name
   subnet_id              = aws_subnet.public_subnet.id
   vpc_security_group_ids = [aws_security_group.redwing_sg.id]
@@ -182,8 +182,8 @@ resource "aws_instance" "redwing_vector_host" {
       "sudo apt-get install -y python3 python3-pip",
       "pip3 install --user grpcio grpcio-tools streamlit scikit-learn",
       "echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> ~/.profile",
-      "echo 'set license env' ${var.license_key}",
-      "echo 'set customer_id env' ${var.customer_id}",    
+      # "echo 'set license env' ${var.license_key}",      # for debug only
+      # "echo 'set customer_id env' ${var.customer_id}",  # for debug only
       "export INSTANCE_PUBLIC_IP=${self.public_ip}",
       "echo 'Instance Public IP: $INSTANCE_PUBLIC_IP'",
     ]
@@ -197,6 +197,16 @@ resource "aws_instance" "redwing_vector_host" {
 
 output "instance_public_ip" {
   value = aws_instance.redwing_vector_host.public_ip
+}
+
+variable "region" {
+  description = "AWS region for deployment"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "AWS instance type for deployment"
+  type        = string
 }
 
 variable "ec2_key_name" {

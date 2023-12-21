@@ -2,40 +2,27 @@
 
 # Vector | Terraform
 
-## Run
+Vector Terraform is an auto-provisioning system to fully deploy Redwing Vector to a cloud provider of your choice. To run the app with prompt-based auto-configuration, simply clone this repo and enter the `terraform` directory where the app is installed and run the following command:
 
-To run the app with prompt-based auto-configuration, simply enter the directory where the app is installed and run the following command:
-
-Mac:
+Mac or Linux:
 
 ```bash
-sh run_mac_terraform.sh
+sh run_terraform.sh
 ```
 
-Linux:
+Alternatively with  credentials without prompt:
 
 ```bash
-sh run_unix_terraform.sh
+sh sh run_terraform.sh "<license_key>" "<customer_id"
 ```
 
-## Manual Configuration
-
-To run the app from a manual configuration, **environment variables must be set**. 
-
-Open the terminal and run the following commands:
-
-```bash
-export LICENSE_KEY='Your Vector License Key'
-export CUSTOMER_ID='Your Vector Customer ID'
-```
+## AWS Credential Configuration
 
 Be sure to run the app from the same terminal window, or ensure the variables are saved to your .bash_profile or .bashrc
 
 Documentation for getting AWS Access Keys is available here, IAM roles must be configured for correct usage and access to Cloudwatch.
 [AWS IAM Documentation](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html
 )
-
-## AWS Credentials Configuration
 
 Before running the application, you need to set up your AWS credentials.
 
