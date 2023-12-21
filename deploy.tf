@@ -178,16 +178,23 @@ resource "aws_instance" "redwing_vector_host" {
       "pip3 install --user grpcio grpcio-tools streamlit scikit-learn",
       "echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> ~/.profile",
       "echo 'set license env' ${var.license_key}",
-      "echo 'set customer_id env' ${var.customer_id}",      
-      "nohup /home/ubuntu/.local/bin/streamlit run network_anomaly_dashboard.py > streamlit.log 2>&1 &",
-      "sleep 5",  # gives a little time for the server to start
-      "cat streamlit.log"
+      "echo 'set customer_id env' ${var.customer_id}",    
+      "export INSTANCE_PUBLIC_IP=${self.public_ip}",
+      "echo 'Instance Public IP: $INSTANCE_PUBLIC_IP'",
+      # "nohup /home/ubuntu/.local/bin/streamlit run network_anomaly_dashboard.py > streamlit.log 2>&1 &", # for running sandbox streamlit
+      # "sleep 5",  # gives a little time for the server to start
+      # "cat streamlit.log"
     ]
+    
   }
 
   tags = {
     Name = "RedwingVectorHost"
   }
+}
+
+output "instance_public_ip" {
+  value = aws_instance.redwing_vector_host.public_ip
 }
 
 variable "ec2_key_name" {
