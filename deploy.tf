@@ -126,8 +126,8 @@ resource "aws_network_acl_rule" "allow_all_outbound" {
 
 # EC2 instance
 resource "aws_instance" "redwing_vector_host" {
-  ami                    = "ami-0c7217cdde317cfec" # Choose your AMI
-  instance_type          = "m5.large" 
+  ami                    = "ami-05d47d29a4c2d19e1" # Choose your AMI / arm64 required for Docker image match
+  instance_type          = "m6g.large" 
   key_name               = var.ec2_key_name
   subnet_id              = aws_subnet.public_subnet.id
   vpc_security_group_ids = [aws_security_group.redwing_sg.id]
@@ -151,8 +151,6 @@ resource "aws_instance" "redwing_vector_host" {
       "#!/bin/bash",
       "export PATH=$PATH:/home/ubuntu/.local/bin",
       "echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> ~/.bashrc",      
-      "echo 'export LICENSE_KEY=${var.license_key}' | sudo tee -a /etc/profile",
-      "echo 'export CUSTOMER_ID=${var.customer_id}' | sudo tee -a /etc/profile",
       "source /etc/profile",
       "sudo bash -c 'cat <<EOF > /etc/needrestart/needrestart.conf\n# needrestart configuration\n\\$nrconf{restart} = a;\nEOF'",
       "sudo DEBIAN_FRONTEND=noninteractive apt-get update",
@@ -163,17 +161,24 @@ resource "aws_instance" "redwing_vector_host" {
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
       "git clone https://github.com/redwing-os/sandbox.git",
-      "cd sandbox/dashboard",
+      "cd sandbox", # get into directory to run docker compose
+      "echo 'setting license env' ${var.license_key}",
+      "echo 'setting customer_id env' ${var.customer_id}",
+      "export LICENSE_KEY=${var.license_key}",
+      "export CUSTOMER_ID=${var.customer_id}",      
       "sudo docker pull helloredwing/vector",
-      "sudo docker-compose up -d",  # Run in detached mode
+      "sudo docker-compose up -d", # -d,  # Run in detached mode # NEED TO REVERT THIS SO PROCESS ENDS
       "sleep 10",  # Short delay for initialization
       "docker ps",  # Check container status
       "docker-compose logs",  # Get initial logs
+      "cd dashboard",  # Get into directory to run streamlit
       "sudo apt-get install -y libpq-dev",  # Install PostgreSQL development files
       "pip3 install psycopg2-binary",       # Install psycopg2-binary      
       "sudo apt-get install -y python3 python3-pip",
       "pip3 install --user grpcio grpcio-tools streamlit scikit-learn",
       "echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> ~/.profile",
+      "echo 'set license env' ${var.license_key}",
+      "echo 'set customer_id env' ${var.customer_id}",      
       "nohup /home/ubuntu/.local/bin/streamlit run network_anomaly_dashboard.py > streamlit.log 2>&1 &",
       "sleep 5",  # gives a little time for the server to start
       "cat streamlit.log"

@@ -50,6 +50,12 @@ aws_access_key_id = YOUR_ACCESS_KEY_ID
 aws_secret_access_key = YOUR_SECRET_ACCESS_KEY
 ```
 
+To connect to deployed box
+
+```
+ssh -i "aws_deploy_key_<id>.pem" ubuntu@<deployed_ip> -o "IdentitiesOnly yes"
+```
+
 Important Notes:
 Never commit your ~/.aws/credentials file to source control.
 Regularly rotate your AWS access keys and always follow best security practices.
