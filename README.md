@@ -35,8 +35,6 @@ Documentation for getting AWS Access Keys is available here, IAM roles must be c
 [AWS IAM Documentation](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html
 )
 
-Visit https://platform.openai.com/account/api-keys
-
 ## AWS Credentials Configuration
 
 Before running the application, you need to set up your AWS credentials.
