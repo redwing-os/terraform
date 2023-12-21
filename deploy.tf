@@ -81,7 +81,7 @@ resource "aws_security_group" "redwing_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -165,15 +165,35 @@ resource "aws_instance" "redwing_vector_host" {
       "sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -o Dpkg::Options::=\"--force-confnew\"",
       "curl -fsSL https://get.docker.com -o get-docker.sh",
       "sudo sh get-docker.sh",
+      # Setting environment variables
+      "echo \"export LICENSE_KEY=${var.license_key}\" | sudo tee -a /etc/environment",
+      "echo \"export CUSTOMER_ID=${var.customer_id}\" | sudo tee -a /etc/environment",
+      # Writing to .env file for Docker Compose
+      "echo \"LICENSE_KEY=${var.license_key}\" > sandbox/.env",
+      "echo \"CUSTOMER_ID=${var.customer_id}\" >> sandbox/.env",
+      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} docker-compose up -d",
+      "echo 'setting license env' ${var.license_key}",
+      "echo 'setting customer_id env' ${var.customer_id}",      
+      "echo 'export LICENSE_KEY=${var.license_key}' >> ~/.bashrc",
+      "echo 'export CUSTOMER_ID=${var.customer_id}' >> ~/.bashrc",      
       "sudo apt-get install -y docker-compose vim",
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
       "git clone https://github.com/redwing-os/sandbox.git",
-      "cd sandbox", # get into directory to run docker compose
+      # Setting environment variables
+      "echo \"export LICENSE_KEY=${var.license_key}\" | sudo tee -a /etc/environment",
+      "echo \"export CUSTOMER_ID=${var.customer_id}\" | sudo tee -a /etc/environment",
+      # Writing to .env file for Docker Compose
+      "echo \"LICENSE_KEY=${var.license_key}\" > sandbox/.env",
+      "echo \"CUSTOMER_ID=${var.customer_id}\" >> sandbox/.env",
+      # Running Docker Compose with environment variables
+      "cd sandbox",
+      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} docker-compose up -d",
       "echo 'setting license env' ${var.license_key}",
-      "echo 'setting customer_id env' ${var.customer_id}",
-      "export LICENSE_KEY=${var.license_key}",
-      "export CUSTOMER_ID=${var.customer_id}",      
+      "echo 'setting customer_id env' ${var.customer_id}",      
+      "echo 'export LICENSE_KEY=${var.license_key}' >> ~/.bashrc",
+      "echo 'export CUSTOMER_ID=${var.customer_id}' >> ~/.bashrc",
+      "source ~/.bashrc",     
       "sudo docker pull helloredwing/vector",
       "sudo docker-compose up -d", # -d,  # Run in detached mode # NEED TO REVERT THIS SO PROCESS ENDS
       "sleep 10",  # Short delay for initialization
