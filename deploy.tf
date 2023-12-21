@@ -164,38 +164,15 @@ resource "aws_instance" "redwing_vector_host" {
       "sudo DEBIAN_FRONTEND=noninteractive apt-get update",
       "sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -o Dpkg::Options::=\"--force-confnew\"",
       "curl -fsSL https://get.docker.com -o get-docker.sh",
-      "sudo sh get-docker.sh",
-      # Setting environment variables
-      "echo \"export LICENSE_KEY=${var.license_key}\" | sudo tee -a /etc/environment",
-      "echo \"export CUSTOMER_ID=${var.customer_id}\" | sudo tee -a /etc/environment",
-      # Writing to .env file for Docker Compose
-      "echo \"LICENSE_KEY=${var.license_key}\" > sandbox/.env",
-      "echo \"CUSTOMER_ID=${var.customer_id}\" >> sandbox/.env",
-      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} docker-compose up -d",
-      "echo 'setting license env' ${var.license_key}",
-      "echo 'setting customer_id env' ${var.customer_id}",      
-      "echo 'export LICENSE_KEY=${var.license_key}' >> ~/.bashrc",
-      "echo 'export CUSTOMER_ID=${var.customer_id}' >> ~/.bashrc",      
+      "sudo sh get-docker.sh", 
       "sudo apt-get install -y docker-compose vim",
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
       "git clone https://github.com/redwing-os/sandbox.git",
-      # Setting environment variables
-      "echo \"export LICENSE_KEY=${var.license_key}\" | sudo tee -a /etc/environment",
-      "echo \"export CUSTOMER_ID=${var.customer_id}\" | sudo tee -a /etc/environment",
-      # Writing to .env file for Docker Compose
-      "echo \"LICENSE_KEY=${var.license_key}\" > sandbox/.env",
-      "echo \"CUSTOMER_ID=${var.customer_id}\" >> sandbox/.env",
-      # Running Docker Compose with environment variables
       "cd sandbox",
-      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} docker-compose up -d",
-      "echo 'setting license env' ${var.license_key}",
-      "echo 'setting customer_id env' ${var.customer_id}",      
-      "echo 'export LICENSE_KEY=${var.license_key}' >> ~/.bashrc",
-      "echo 'export CUSTOMER_ID=${var.customer_id}' >> ~/.bashrc",
       "source ~/.bashrc",     
       "sudo docker pull helloredwing/vector",
-      "sudo docker-compose up -d", # -d,  # Run in detached mode # NEED TO REVERT THIS SO PROCESS ENDS
+      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} docker-compose up -d",   
       "sleep 10",  # Short delay for initialization
       "docker ps",  # Check container status
       "docker-compose logs",  # Get initial logs
@@ -209,9 +186,6 @@ resource "aws_instance" "redwing_vector_host" {
       "echo 'set customer_id env' ${var.customer_id}",    
       "export INSTANCE_PUBLIC_IP=${self.public_ip}",
       "echo 'Instance Public IP: $INSTANCE_PUBLIC_IP'",
-      # "nohup /home/ubuntu/.local/bin/streamlit run network_anomaly_dashboard.py > streamlit.log 2>&1 &", # for running sandbox streamlit
-      # "sleep 5",  # gives a little time for the server to start
-      # "cat streamlit.log"
     ]
     
   }
