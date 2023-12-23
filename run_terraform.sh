@@ -271,14 +271,14 @@ region=$(select_option "Enter your choice:" "${available_regions[@]}")
 case $cloud_provider in
   "aws")
     echo "Select an instance type category for AWS:"
-    categories=("ARM Instances" "AMD Instances")
+    categories=("arm" "amd")
     instance_category=$(select_option "Enter your choice:" "${categories[@]}")
 
     case $instance_category in
-        "ARM Instances")
+        "arm")
             available_instances=($(get_aws_arm_instances))
             ;;
-        "AMD Instances")
+        "amd")
             available_instances=($(get_aws_amd_instances))
             ;;
     esac
