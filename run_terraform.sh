@@ -295,9 +295,36 @@ esac
 echo "Select an instance type:"
 instance_type=$(select_option "Enter your choice:" "${available_instances[@]}")
 
+# Menu for selecting the database
+echo "Select Database:"
+databases=("Cassandra" "ScyllaDB" "MongoDB")
+database=$(select_option "Enter your choice:" "${databases[@]}")
+
+export TF_VAR_database_selection="$database"
+
+echo "You have selected Database: $database"
+
+case $TF_VAR_database_selection in
+  "Cassandra")
+    export DB_IMAGE="cassandra:latest"
+    export DB_PORT="9042"
+    ;;
+  "ScyllaDB")
+    export DB_IMAGE="scylladb/scylla:latest"
+    export DB_PORT="9042" # Adjust if different
+    ;;
+  "MongoDB")
+    export DB_IMAGE="mongo:latest"
+    export DB_PORT="27017"
+    ;;
+esac
+
 echo "You have selected Cloud Provider: $cloud_provider"
 echo "You have selected Region: $region"
 echo "You have selected Instance Type: $instance_type"
+
+# Generate a Docker Compose file
+# envsubst < "docker-compose.template.yml" > "docker-compose.yml" # dynamic compose generation
 
 # Function to check if the instance requires a custom enterprise license
 function requires_custom_license {

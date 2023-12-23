@@ -132,6 +132,12 @@ resource "aws_network_acl_rule" "allow_all_outbound" {
   cidr_block     = "0.0.0.0/0"
 }
 
+# DB type which gets passed into docker compose
+variable "database_selection" {
+  description = "Database selection for deployment"
+  type        = string
+}
+
 # EC2 instance
 resource "aws_instance" "redwing_vector_host" {
   ami                    = "ami-05d47d29a4c2d19e1" # Choose your AMI / arm64 required for Docker image match
