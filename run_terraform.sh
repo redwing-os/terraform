@@ -7,6 +7,15 @@ if ! command -v brew &> /dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
+# Define a function to set the text color to cyan
+echo_cyan() {
+    echo "\033[0;36m$1\033[0m"
+}
+
+echo_magenta() {
+    echo "\033[0;35m$1\033[0m"
+}
+
 # Install Terraform
 echo "Installing Terraform..."
 brew tap hashicorp/tap
@@ -18,7 +27,7 @@ brew install awscli
 
 # Check for LICENSE_KEY and CUSTOMER_ID parameters
 if [ -z "$1" ]; then
-  echo "Enter your LICENSE_KEY:"
+  echo_cyan "Enter your LICENSE_KEY:"
   read LICENSE_KEY
 else
   LICENSE_KEY=$1
@@ -26,7 +35,7 @@ fi
 export TF_VAR_license_key="$LICENSE_KEY"
 
 if [ -z "$2" ]; then
-  echo "Enter your CUSTOMER_ID:"
+  echo_cyan "Enter your CUSTOMER_ID:"
   read CUSTOMER_ID
 else
   CUSTOMER_ID=$2
@@ -243,7 +252,7 @@ function get_gcp_regions {
 }
 
 # Menu for selecting the cloud provider
-echo "Select Cloud Provider:"
+echo_cyan "Select Cloud Provider:"
 options=("aws" "azure" "gcp")
 cloud_provider=$(select_option "Enter your choice:" "${options[@]}")
 
@@ -258,13 +267,13 @@ case $cloud_provider in
     available_regions=($(get_gcp_regions))
     ;;
   *)
-    echo "Invalid choice"
+    echo_magenta "Invalid choice"
     exit 1
     ;;
 esac
 
 # Selecting region
-echo "Select a region:"
+echo_cyan "Select a region:"
 region=$(select_option "Enter your choice:" "${available_regions[@]}")
 
 # Now select instance type based on the cloud provider
@@ -292,12 +301,12 @@ case $cloud_provider in
 esac
 
 # Selecting instance type
-echo "Select an instance type:"
+echo_cyan "Select an instance type:"
 instance_type=$(select_option "Enter your choice:" "${available_instances[@]}")
 
 # Menu for selecting the database
-echo "Select Database:"
-databases=("cassandra" "scylladb" "mongodb")
+echo_cyan "Select Database:"
+databases=("cassandra" "scylladb")
 database=$(select_option "Enter your choice:" "${databases[@]}")
 
 export TF_VAR_database_selection="$database"
@@ -307,21 +316,18 @@ echo "You have selected Database: $database"
 case $TF_VAR_database_selection in
   "cassandra")
     export DB_IMAGE="cassandra:latest"
-    export DB_PORT="9042"
+    export DB_PORT="9042" # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX
     ;;
   "scylladb")
     export DB_IMAGE="scylladb/scylla:latest"
-    export DB_PORT="9042" # Adjust if different
-    ;;
-  "mongodb")
-    export DB_IMAGE="mongo:latest"
-    export DB_PORT="27017"
+    export DB_PORT="9042" # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX
     ;;
 esac
 
 echo "You have selected Cloud Provider: $cloud_provider"
 echo "You have selected Region: $region"
 echo "You have selected Instance Type: $instance_type"
+echo "You have selected DB Type: $database"
 
 # Generate a Docker Compose file
 # envsubst < "docker-compose.template.yml" > "docker-compose.yml" # dynamic compose generation

@@ -163,6 +163,7 @@ resource "aws_instance" "redwing_vector_host" {
   provisioner "remote-exec" {
     inline = [
       "#!/bin/bash",
+      "echo -e '\\033[34m'", # Set text color to blue
       "export PATH=$PATH:/home/ubuntu/.local/bin",
       "echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> ~/.bashrc",      
       "source /etc/profile",
@@ -190,10 +191,13 @@ resource "aws_instance" "redwing_vector_host" {
       "echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> ~/.profile",
       # "echo 'set license env' ${var.license_key}",      # for debug only
       # "echo 'set customer_id env' ${var.customer_id}",  # for debug only
-      "export INSTANCE_PUBLIC_IP=${self.public_ip}",
-      "echo 'Instance Public IP: $INSTANCE_PUBLIC_IP'",
+      # Generate a script with commands
+      "echo 'export PRIVATE_KEY_PATH=${var.private_key_path}' > connect.sh",
+      "echo 'export INSTANCE_PUBLIC_IP=${self.public_ip}' >> connect.sh",
+      "echo 'echo connecting to instance using SSH command:' >> connect.sh",
+      "echo -e '\\033[0;36m'", # Set text color to cyan
+      "echo 'echo ssh -i \\\"$PRIVATE_KEY_PATH\\\" -o StrictHostKeyChecking=no ubuntu@$INSTANCE_PUBLIC_IP -o \\\"IdentitiesOnly yes\\\"' >> connect.sh",
     ]
-    
   }
 
   tags = {
