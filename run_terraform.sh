@@ -244,17 +244,17 @@ function get_gcp_regions {
 
 # Menu for selecting the cloud provider
 echo "Select Cloud Provider:"
-options=("AWS" "Azure" "GCP")
+options=("aws" "azure" "gcp")
 cloud_provider=$(select_option "Enter your choice:" "${options[@]}")
 
 case $cloud_provider in
-  "AWS")
+  "aws")
     available_regions=($(get_aws_regions))
     ;;
-  "Azure")
+  "azure")
     available_regions=($(get_azure_regions))
     ;;
-  "GCP")
+  "gcp")
     available_regions=($(get_gcp_regions))
     ;;
   *)
@@ -269,7 +269,7 @@ region=$(select_option "Enter your choice:" "${available_regions[@]}")
 
 # Now select instance type based on the cloud provider
 case $cloud_provider in
-  "AWS")
+  "aws")
     echo "Select an instance type category for AWS:"
     categories=("ARM Instances" "AMD Instances")
     instance_category=$(select_option "Enter your choice:" "${categories[@]}")
@@ -283,10 +283,10 @@ case $cloud_provider in
             ;;
     esac
     ;;
-  "Azure")
+  "azure")
     available_instances=($(get_azure_instances))
     ;;
-  "GCP")
+  "gcp")
     available_instances=($(get_gcp_instances))
     ;;
 esac
@@ -297,7 +297,7 @@ instance_type=$(select_option "Enter your choice:" "${available_instances[@]}")
 
 # Menu for selecting the database
 echo "Select Database:"
-databases=("Cassandra" "ScyllaDB" "MongoDB")
+databases=("cassandra" "scylladb" "mongodb")
 database=$(select_option "Enter your choice:" "${databases[@]}")
 
 export TF_VAR_database_selection="$database"
@@ -305,15 +305,15 @@ export TF_VAR_database_selection="$database"
 echo "You have selected Database: $database"
 
 case $TF_VAR_database_selection in
-  "Cassandra")
+  "cassandra")
     export DB_IMAGE="cassandra:latest"
     export DB_PORT="9042"
     ;;
-  "ScyllaDB")
+  "scylladb")
     export DB_IMAGE="scylladb/scylla:latest"
     export DB_PORT="9042" # Adjust if different
     ;;
-  "MongoDB")
+  "mongodb")
     export DB_IMAGE="mongo:latest"
     export DB_PORT="27017"
     ;;
