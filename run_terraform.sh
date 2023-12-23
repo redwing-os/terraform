@@ -49,8 +49,57 @@ function select_option {
     done
 }
 
+function get_aws_amd_instances {
+    echo "a4g.micro"
+    echo "a4g.small"
+    echo "a4g.medium"
+    echo "a4g.large"
+    echo "a4g.xlarge"
+    echo "a4g.2xlarge"
+    echo "a6g.medium"
+    echo "a6g.large"
+    echo "a6g.xlarge"
+    echo "a6g.2xlarge"
+    echo "a6g.4xlarge"
+    echo "a6g.8xlarge"
+    echo "a6g.12xlarge"
+    echo "a6g.16xlarge"
+    echo "c7g.medium"
+    echo "c7g.large"
+    echo "c7g.xlarge"
+    echo "c7g.2xlarge"
+    echo "c7g.4xlarge"
+    echo "c7g.8xlarge"
+    echo "c7g.12xlarge"
+    echo "c7g.16xlarge"
+    echo "r7g.medium"
+    echo "r7g.large"
+    echo "r7g.xlarge"
+    echo "r7g.2xlarge"
+    echo "r7g.4xlarge"
+    echo "r7g.8xlarge"
+    echo "r7g.12xlarge"
+    echo "r7g.16xlarge"
+    echo "a6gd.metal"
+    echo "c7gd.metal"
+    echo "r7gd.metal"
+    echo "a6g.metal"
+    echo "c7g.metal"
+    echo "r7g.metal"
+    echo "u-6tb2.metal"
+    echo "u-9tb2.metal"
+    echo "u-12tb2.metal"
+    echo "u-18tb2.metal"
+    echo "u-24tb2.metal"
+    echo "x3gd.metal"
+    echo "x3gd.16xlarge"
+    echo "x3gd.12xlarge"
+    echo "x3gd.8xlarge"
+    echo "x3gd.4xlarge"
+}
+
 # Function to get ARM64 compatible instances for AWS
-function get_aws_instances {
+function get_aws_arm_instances {
     echo "t4g.micro"
     echo "t4g.small"
     echo "t4g.medium"
@@ -198,34 +247,15 @@ echo "Select Cloud Provider:"
 options=("AWS" "Azure" "GCP")
 cloud_provider=$(select_option "Enter your choice:" "${options[@]}")
 
-# ... [rest of the script]
-
-# Menu for selecting the region
-echo "Select a region:"
-options=($(get_aws_regions)) # Assuming AWS is chosen, adjust for other providers
-region=$(select_option "Enter your choice:" "${options[@]}")
-
-# Menu for selecting the instance type
-echo "Select an instance type:"
-options=($(get_aws_instances)) # Assuming AWS is chosen, adjust for other providers
-instance_type=$(select_option "Enter your choice:" "${options[@]}")
-
-# Handle provider selection and get regions
 case $cloud_provider in
   "AWS")
-    cloud_provider="aws"
-    available_instances=$(get_aws_instances)
-    available_regions=$(get_aws_regions)
+    available_regions=($(get_aws_regions))
     ;;
   "Azure")
-    cloud_provider="azure"
-    available_instances=$(get_azure_instances)
-    available_regions=$(get_azure_regions)
+    available_regions=($(get_azure_regions))
     ;;
   "GCP")
-    cloud_provider="gcp"
-    available_instances=$(get_gcp_instances)
-    available_regions=$(get_gcp_regions)
+    available_regions=($(get_gcp_regions))
     ;;
   *)
     echo "Invalid choice"
@@ -233,9 +263,41 @@ case $cloud_provider in
     ;;
 esac
 
-echo "You have selected Instance Type: $instance_type"
+# Selecting region
+echo "Select a region:"
+region=$(select_option "Enter your choice:" "${available_regions[@]}")
+
+# Now select instance type based on the cloud provider
+case $cloud_provider in
+  "AWS")
+    echo "Select an instance type category for AWS:"
+    categories=("ARM Instances" "AMD Instances")
+    instance_category=$(select_option "Enter your choice:" "${categories[@]}")
+
+    case $instance_category in
+        "ARM Instances")
+            available_instances=($(get_aws_arm_instances))
+            ;;
+        "AMD Instances")
+            available_instances=($(get_aws_amd_instances))
+            ;;
+    esac
+    ;;
+  "Azure")
+    available_instances=($(get_azure_instances))
+    ;;
+  "GCP")
+    available_instances=($(get_gcp_instances))
+    ;;
+esac
+
+# Selecting instance type
+echo "Select an instance type:"
+instance_type=$(select_option "Enter your choice:" "${available_instances[@]}")
+
 echo "You have selected Cloud Provider: $cloud_provider"
 echo "You have selected Region: $region"
+echo "You have selected Instance Type: $instance_type"
 
 # Function to check if the instance requires a custom enterprise license
 function requires_custom_license {

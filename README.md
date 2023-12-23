@@ -43,6 +43,12 @@ To connect to deployed box
 ssh -i "aws_deploy_key_<id>.pem" ubuntu@<deployed_ip> -o "IdentitiesOnly yes"
 ```
 
+To teardown Terraform managed cloud 
+
+```
+sudo sh destroy.sh
+```
+
 Important Notes:
 Never commit your ~/.aws/credentials file to source control.
 Regularly rotate your AWS access keys and always follow best security practices.
