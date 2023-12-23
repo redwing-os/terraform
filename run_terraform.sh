@@ -279,7 +279,7 @@ region=$(select_option "Enter your choice:" "${available_regions[@]}")
 # Now select instance type based on the cloud provider
 case $cloud_provider in
   "aws")
-    echo "Select an instance type category for AWS:"
+    echo_cyan "Select an instance type category for AWS:"
     categories=("arm" "amd")
     instance_category=$(select_option "Enter your choice:" "${categories[@]}")
 
