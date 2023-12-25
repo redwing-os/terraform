@@ -1,6 +1,9 @@
 #!/bin/bash
 # ./run_mac_terraform.sh "your_license_key" "your_customer_id"
 
+# Remove any existing key files that start with 'aws_deploy'
+rm aws_deploy*
+
 # Check if Homebrew is installed
 if ! command -v brew &> /dev/null; then
     echo "Installing Homebrew..."
