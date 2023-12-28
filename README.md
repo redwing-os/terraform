@@ -7,13 +7,13 @@ Vector Terraform is an auto-provisioning system to fully deploy Redwing Vector t
 Mac or Linux:
 
 ```bash
-sh run_terraform.sh
+sh deploy.sh
 ```
 
 Alternatively with  credentials without prompt:
 
 ```bash
-sh sh run_terraform.sh "<license_key>" "<customer_id"
+sh deploy.sh "<license_key>" "<customer_id"
 ```
 
 ## AWS Credential Configuration
