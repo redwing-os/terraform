@@ -309,7 +309,7 @@ instance_type=$(select_option "Enter your choice:" "${available_instances[@]}")
 
 # Menu for selecting the database
 echo_cyan "Select Database:"
-databases=("cassandra") # "scylladb")
+databases=("cassandra" "scylladb")
 database=$(select_option "Enter your choice:" "${databases[@]}")
 
 export TF_VAR_database_selection="$database"
@@ -318,13 +318,13 @@ echo "You have selected Database: $database"
 
 case $TF_VAR_database_selection in
   "cassandra")
-    export DB_IMAGE="cassandra:latest"
-    export DB_PORT="9042" # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX
+    export TF_VAR_db_image="cassandra:latest"
+    export TF_VAR_db_port="9042" # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX
     ;;
-#   "scylladb")
-#     export DB_IMAGE="scylladb/scylla:latest"
-#     export DB_PORT="9042" # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX
-#     ;;
+  "scylladb")
+    export TF_VAR_db_image="scylladb/scylla:latest"
+    export TF_VAR_db_port= # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX  
+    ;;
 esac
 
 echo "You have selected Cloud Provider: $cloud_provider"

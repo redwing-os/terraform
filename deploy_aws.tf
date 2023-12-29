@@ -178,7 +178,7 @@ resource "aws_instance" "redwing_vector_host" {
       "cd sandbox",
       "source ~/.bashrc",     
       "sudo docker pull helloredwing/vector",
-      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} docker-compose up -d",   
+      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} DB_IMAGE=${var.db_image} DB_PORT=${var.db_port} docker-compose up -d",   
       "sleep 10",  # Short delay for initialization
       "docker ps",  # Check container status
       "docker-compose logs",  # Get initial logs
@@ -233,6 +233,16 @@ variable "license_key" {
 
 variable "customer_id" {
   description = "Redwing Vector Customer ID"
+  type        = string
+}
+
+variable "db_image" {
+  description = "Docker image for the database"
+  type        = string
+}
+
+variable "db_port" {
+  description = "Port for the database"
   type        = string
 }
 
