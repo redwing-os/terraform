@@ -323,7 +323,7 @@ case $TF_VAR_database_selection in
     ;;
   "scylladb")
     export TF_VAR_db_image="scylladb/scylla:latest"
-    export TF_VAR_db_port= # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX  
+    export TF_VAR_db_port="9042" # 7000 for cluster communication (7001 if SSL is enabled), 9042 for native protocol clients, and 7199 for JMX  
     ;;
 esac
 

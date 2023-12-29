@@ -62,7 +62,7 @@ resource "aws_security_group" "redwing_sg" {
   # Allow inbound HTTP traffic on port 8501 for Streamlit
   ingress {
     from_port   = 8501
-    to_port     = 8501
+    to_port     = 8509
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -109,7 +109,7 @@ resource "aws_network_acl_rule" "allow_http_inbound" {
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
   from_port      = 8501
-  to_port        = 8501
+  to_port        = 8509
 }
 
 resource "aws_network_acl_rule" "allow_ssh_inbound" {
@@ -178,27 +178,32 @@ resource "aws_instance" "redwing_vector_host" {
       "cd sandbox",
       "source ~/.bashrc",     
       "sudo docker pull helloredwing/vector",
-      "sudo LICENSE_KEY=${var.license_key} CUSTOMER_ID=${var.customer_id} DB_IMAGE=${var.db_image} DB_PORT=${var.db_port} docker-compose up -d",   
+      "touch /home/ubuntu/sandbox/.env",
+      "echo 'LICENSE_KEY=${var.license_key}' > .env", # configure here for .env-dev/stage/prod here and in the docker-compose.yml of redwing-os/sandbox
+      "echo 'CUSTOMER_ID=${var.customer_id}' >> .env",
+      "echo 'DB_PORT=${var.db_port}' >> .env",
+      "echo 'DB_IMAGE=${var.db_image}' >> .env",
+      "echo 'RUST_BACKTRACE=full' >> .env",
+      "sudo -E docker-compose up -d",
       "sleep 10",  # Short delay for initialization
       "docker ps",  # Check container status
       "docker-compose logs",  # Get initial logs
-      "cd dashboard",  # Get into directory to run streamlit
       "sudo apt-get install -y libpq-dev",  # Install PostgreSQL development files
       "pip3 install psycopg2-binary",       # Install psycopg2-binary      
       "sudo apt-get install -y python3 python3-pip",
       "pip3 install --user grpcio grpcio-tools streamlit scikit-learn",
       "echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> ~/.profile",
-      # "echo 'set license env' ${var.license_key}",      # for debug only
-      # "echo 'set customer_id env' ${var.customer_id}",  # for debug only
-      # Generate a script with commands
       "echo 'export PRIVATE_KEY_PATH=${var.private_key_path}' > info.sh",
       "echo 'export INSTANCE_PUBLIC_IP=${self.public_ip}' >> info.sh",
       "echo 'echo connecting to instance using SSH command:' >> info.sh",
       "echo 'echo ssh -i \\\"$PRIVATE_KEY_PATH\\\" -o StrictHostKeyChecking=no ubuntu@$INSTANCE_PUBLIC_IP -o \\\"IdentitiesOnly yes\\\"' >> info.sh",
-
-      # Set permission and run the script showing connect run instructions
       "chmod +x info.sh",
-      "sh ./info.sh"
+      "sh ./info.sh",
+      "echo 'REPLACEMENT_IP=${self.public_ip}:50051' >> .env",
+      "chmod +x regex.sh",
+      "./regex.sh",      
+      "cd dashboard",  # Get into directory to run streamlit
+      "nohup streamlit run network_anomaly_dashboard.py > /dev/null 2>&1 &",
     ]
   }
 
