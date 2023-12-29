@@ -201,7 +201,7 @@ resource "aws_instance" "redwing_vector_host" {
       "sh ./info.sh",
       "echo 'REPLACEMENT_IP=${self.public_ip}:50051' >> .env",
       "chmod +x regex.sh",
-      "./regex.sh",      
+      "sh ./regex.sh",      
       "cd dashboard",  # Get into directory to run streamlit
       "nohup streamlit run network_anomaly_dashboard.py > /dev/null 2>&1 &",
     ]
