@@ -181,6 +181,7 @@ resource "aws_instance" "redwing_vector_host" {
       "touch /home/ubuntu/sandbox/.env",
       "echo 'LICENSE_KEY=${var.license_key}' > .env", # configure here for .env-dev/stage/prod here and in the docker-compose.yml of redwing-os/sandbox
       "echo 'CUSTOMER_ID=${var.customer_id}' >> .env",
+      "echo 'DB_HOST=db' >> .env",
       "echo 'DB_PORT=${var.db_port}' >> .env",
       "echo 'DB_IMAGE=${var.db_image}' >> .env",
       "echo 'RUST_BACKTRACE=full' >> .env",
@@ -203,7 +204,7 @@ resource "aws_instance" "redwing_vector_host" {
       "chmod +x regex.sh",
       "sh ./regex.sh",      
       "cd dashboard",  # Get into directory to run streamlit
-      "nohup streamlit run network_anomaly_dashboard.py > /dev/null 2>&1 &",
+      "streamlit run network_anomaly_dashboard.py > /dev/null 2>&1 &",
     ]
   }
 
