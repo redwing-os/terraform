@@ -184,6 +184,7 @@ resource "aws_instance" "redwing_vector_host" {
       "echo 'DB_HOST=db' >> .env",
       "echo 'DB_PORT=${var.db_port}' >> .env",
       "echo 'DB_IMAGE=${var.db_image}' >> .env",
+      "echo 'DB_STARTUP_CMD=${var.db_startup_cmd}' >> .env",
       "echo 'RUST_BACKTRACE=full' >> .env",
       "sudo -E docker-compose up -d",
       "sleep 10",  # Short delay for initialization
@@ -249,6 +250,11 @@ variable "db_image" {
 
 variable "db_port" {
   description = "Port for the database"
+  type        = string
+}
+
+variable "db_startup_cmd" {
+  description = "Startup commands for Database" # required for ScyllaDB
   type        = string
 }
 
