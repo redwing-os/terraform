@@ -200,11 +200,11 @@ resource "aws_instance" "redwing_vector_host" {
       "echo 'echo ssh -i \\\"$PRIVATE_KEY_PATH\\\" -o StrictHostKeyChecking=no ubuntu@$INSTANCE_PUBLIC_IP -o \\\"IdentitiesOnly yes\\\"' >> info.sh",
       "chmod +x info.sh",
       "sh ./info.sh",
-      "echo 'REPLACEMENT_IP=${self.public_ip}:50051' >> .env",
-      "chmod +x regex.sh",
-      "sh ./regex.sh",      
-      "cd dashboard",  # Get into directory to run streamlit
-      "streamlit run network_anomaly_dashboard.py > /dev/null 2>&1 &",
+      # "echo 'REPLACEMENT_IP=${self.public_ip}:50051' >> .env",
+      # "chmod +x regex.sh",
+      # "sh ./regex.sh",      
+      # "cd dashboard",  # Get into directory to run streamlit
+      # "streamlit run network_anomaly_dashboard.py > /dev/null 2>&1 &",
     ]
   }
 
